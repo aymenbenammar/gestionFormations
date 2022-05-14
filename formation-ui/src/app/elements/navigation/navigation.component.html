@@ -67,22 +67,10 @@
           <span class="nav-text">Utilisateurs</span>
         </a>
       </li>
-      <li *ngIf="role=='SIMPLEUSER'"[ngClass]="{'mm-active': parametreArray.indexOf(currentHref) > -1}">
-        <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
-          <i class="flaticon-381-settings-4"></i>
-          <span class="nav-text">Configuration</span>
-        </a>
-        <ul aria-expanded="false"  [ngClass]="{'mm-show': parametreArray.indexOf(currentHref) > -1}">
-          <li><a class="{{(currentHref == '/admin/parametre' ) ? 'mm-active' : ''}}" [routerLink]="['/admin/parametre']">Paramétre</a></li>
-        </ul>
-      </li>
+
 
     </ul>
 
 
-    <div class="copyright">
-      <p><strong>Formation  Admin  Dashboard</strong> © 2022 All Rights Reserved</p>
-      <p class="fs-12">Made with <span [ngClass]="{'': toggleIcon, 'heart-blast': !toggleIcon}" class="heart" (click)="toggleLoveIcon()"></span> by Roua laadouz</p>
-    </div>
   </div>
 </div>
