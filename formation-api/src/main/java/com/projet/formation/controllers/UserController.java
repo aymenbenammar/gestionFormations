@@ -8,6 +8,7 @@ import com.projet.formation.models.User;
 import com.projet.formation.services.UserService;
 import com.projet.formation.services.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,18 +39,19 @@ public class UserController {
         return new ResponseEntity<>(listOfUserDTO, HttpStatus.OK);
     }
     @PostMapping(value = "/addUser")
-    public ResponseEntity<UserDto> addOrUpdateUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<AjoutResponse> addOrUpdateUser(@RequestBody UserDto userDto) {
+        AjoutResponse ajoutResponse = new AjoutResponse();
         if (userDto.getPassword().length() < 20) {
             userDto.setPassword(userServiceImpl.ecnodePassword(userDto.getPassword()));
         }
-        if (userDto.getId() == null) {
-            userDto.setCreationDate(new Date());
-        } else {
-            userDto.setModificationDate(new Date());
+        User user = ObjectMapperUtils.map(userDto, User.class);
+        try {
+            ajoutResponse =userService.addOrUpdateUser(user);
+
+        } catch (DataIntegrityViolationException e) {
+            ajoutResponse.setMessage("Login existant");
         }
-        User user = ObjectMapperUtils.map(userDto,User.class);
-        UserDto userDto1 = ObjectMapperUtils.map(userService.addOrUpdateUser(user),UserDto.class);
-        return new ResponseEntity<>(userDto1, HttpStatus.OK);
+        return new ResponseEntity<>(ajoutResponse, HttpStatus.OK);
     }
     @GetMapping("/getUserByLogin")
     public ResponseEntity<UserDto> getUserByLogin(@RequestParam(name = "login", required = true) String login) {

@@ -39,6 +39,12 @@
               <th pSortableColumn="pays">pays
                 <p-sortIcon field="pays"></p-sortIcon>
               </th>
+              <th pSortableColumn="formation">Formations
+                <p-sortIcon field="formation"></p-sortIcon>
+              </th>
+              <th pSortableColumn="affect">Affect to Formation
+                <p-sortIcon field="affect"></p-sortIcon>
+              </th>
               <th style="width: 132px;"></th>
             </tr>
           </ng-template>
@@ -49,12 +55,18 @@
               <td>{{participant.email}}</td>
               <td>{{participant.tel}}</td>
               <td><span *ngIf="participant.pays!=null">{{ participant!.pays!.libelle }}</span></td>
+              <td ><span *ngFor="let formation of participant!.formations"  >{{ formation.titre }}<br></span></td>
+              <td>
+                <button pButton pRipple icon="pi pi-send" class="p-button-rounded p-button-help"
+                        (click)="AffectParticipant(participant)"></button>
+              </td>
 
               <td>
                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
                         (click)="editParticipant(participant)"></button>
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
                         (click)="deleteParticipant(participant)"></button>
+
               </td>
             </tr>
           </ng-template>
@@ -70,7 +82,7 @@
     <ng-template pTemplate="content">
       <form class="example"  [formGroup]="ParticipantGroup">
         <div class="container-fluid default-autocomplete default-mt-input">
-          <div class="row">
+          <div *ngIf="!displayAffect" class="row">
             <div class="col-sm-4">
               <mat-form-field class="example-full-width">
                 <mat-label>Nom</mat-label>
@@ -99,7 +111,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-sm-6">
+            <div *ngIf="!displayAffect" class="col-sm-6">
               <mat-form-field class="example-full-width">
                 <mat-label>Email</mat-label>
                 <input type="email" matInput
@@ -132,6 +144,22 @@
                 <mat-error *ngIf="paysControl.hasError('required')">pays est <strong>obligatoire</strong>
                 </mat-error>
               </mat-form-field>
+              <mat-form-field *ngIf="displayAffect"class="example-full-width">
+                <mat-label>pays</mat-label>
+                <mat-select formControlName="paysControl">
+                  <mat-option
+                    *ngFor="let pays of paysList" [value]="pays">{{pays.libelle}} </mat-option>
+                </mat-select>
+                <mat-error *ngIf="paysControl.hasError('required')">pays est <strong>obligatoire</strong>
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field *ngIf="displayAffect"class="example-full-width">
+                <mat-label>Formations</mat-label>
+                <mat-select formControlName="formationControl" multiple>
+                  <mat-option
+                    *ngFor="let formation of formationList"  [value]="formation">{{formation.titre}} </mat-option>
+                </mat-select>
+              </mat-form-field>
             </div>
 
           </div>
@@ -145,9 +173,13 @@
       <button  *ngIf="displayEdit"  pButton label="Save" icon="pi pi-check" class="p-button-edit-model p-button-text"
                (click)="saveEditParticipant(participant)"></button>
       <button  *ngIf="displayAdd" pButton label="Cancel" icon="pi pi-times" class="p-button-edit-model p-button-text"
-               (click)="displayEdit=openpopup=false"></button>
+               (click)="displayAdd=openpopup=false"></button>
       <button  *ngIf="displayAdd" pButton label="Save" icon="pi pi-check" class="p-button-edit-model p-button-text"
                (click)="saveNewParticipant()"></button>
+      <button  *ngIf="displayAffect" pButton label="Cancel" icon="pi pi-times" class="p-button-edit-model p-button-text"
+               (click)="displayAffect=openpopup=false"></button>
+      <button  *ngIf="displayAffect" pButton label="Save" icon="pi pi-check" class="p-button-edit-model p-button-text"
+               (click)="saveAffectParticipant(participant)"></button>
     </ng-template>
   </p-dialog>
 </div>

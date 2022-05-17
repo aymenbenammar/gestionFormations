@@ -5,8 +5,10 @@ import {ConfirmationService, MessageService} from "primeng/api";
 import {ParticipantsService} from "../shared/service/participants.service";
 import {Pays} from "../model/Pays";
 import {PaysService} from "../shared/service/pays.service";
+import {Formations} from "../model/Formations";
+import {FormationsService} from "../shared/service/formations.service";
 
-let FORMATEURS: Participants[] = [];
+let PARTICIAPANTS: Participants[] = [];
 
 @Component({
   selector: 'app-participants',
@@ -17,36 +19,41 @@ export class ParticipantsComponent implements OnInit {
   openpopup: boolean = false;
   ParticipantGroup!: FormGroup;
   ParticipantForm!: Participants;
+  displayAffect: boolean=false;
   displayEdit: boolean = false;
   displayAdd: boolean = false;
   title!: string;
   participants!: Participants[];
   participant!: Participants;
-  paysList:Pays[]=[]
+  paysList:Pays[]=[];
+  formationList: Formations[]=[];
 
 
   nomControl = new FormControl('', [Validators.required]);
   prenomControl = new FormControl('', [Validators.required]);
   telControl = new FormControl('', [Validators.required]);
   paysControl = new FormControl('', [Validators.required]);
+  formationControl= new FormControl('',[Validators.required]);
 
   constructor( private confirmationService: ConfirmationService, private formBuilder: FormBuilder,private paysService: PaysService,
-              private participantsService: ParticipantsService, private messageService: MessageService,
+              private participantsService: ParticipantsService, private messageService: MessageService,private formationService:FormationsService
   ) {
     this.ParticipantGroup = this.formBuilder.group({
       nomControl: ['', Validators.required],
       emailControl: ['', [Validators.required, Validators.email]],
       prenomControl: ['', Validators.required],
       telControl: ['', Validators.required],
-      tpaysControl: ['', Validators.required],
+      paysControl: ['', Validators.required],
+      formationControl:['']
     });
     this.ParticipantForm = {
-      participantId: undefined,
+      id: undefined,
       nom: '',
       prenom: '',
       email: '',
       tel: undefined,
       pays: undefined,
+      formations: undefined
     }
   }
 
@@ -60,12 +67,35 @@ export class ParticipantsComponent implements OnInit {
     return this.participantsService.getAllParticipants().subscribe(data => {
       this.participants = data;
       console.log(data);
-      FORMATEURS = this.participants
+      PARTICIAPANTS = this.participants
     })
   }
   comparer(o1: any, o2: any): boolean {
     // if possible compare by object's name, and not by reference.
     return o1 && o2 ? o1.libelle === o2.libelle : o2 === o2;
+  }
+  AffectParticipant(participant: Participants){
+    if (this.openpopup) {
+      this.openpopup = false;
+      this.openpopup = true;
+    } else {
+      this.openpopup = true;
+    }
+    this.title = 'Affecter Participant';
+    this.participant = {...participant};
+    this.displayEdit = false;
+    this.displayAdd = false;
+    this.displayAffect=true;
+    this.ParticipantGroup = this.formBuilder.group({
+      nomControl: [this.participant.nom, Validators.required],
+      emailControl: [this.participant.email, [Validators.required, Validators.email]],
+      prenomControl: [this.participant.prenom, Validators.required],
+      telControl: [this.participant.tel, Validators.required],
+      paysControl: [this.participant.pays!.libelle, Validators.required],
+      formationControl: [this.participant.formations!.titre]
+    });
+    this.getAllFormations();
+    this.getAllPays()
   }
   editParticipant(participant: Participants) {
 
@@ -77,6 +107,7 @@ export class ParticipantsComponent implements OnInit {
     }
     this.title = 'Modifier Participant';
     this.participant = {...participant};
+    this.displayAffect=false;
     this.displayEdit = true;
     this.displayAdd = false;
     this.ParticipantGroup = this.formBuilder.group({
@@ -86,6 +117,7 @@ export class ParticipantsComponent implements OnInit {
       telControl: [this.participant.tel, Validators.required],
       paysControl: [this.participant.pays!.libelle, Validators.required],
     });
+    this.getAllFormations();
     this.getAllPays()
   }
 
@@ -95,12 +127,11 @@ export class ParticipantsComponent implements OnInit {
       header: 'Confirmation de suppression',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        if (participant.participantId != null) {
-          this.participantsService.deleteParticipant(participant.participantId).subscribe(data => {
-            this.hideDialog();
-            this.ngOnInit();
+        if (participant.id != null) {
+          this.participantsService.deleteParticipant(participant.id).subscribe(data => {
+
             if (JSON.stringify(data.message == "success")) {
-              this.participants = this.participants.filter(val => val.participantId !== participant.participantId);
+              this.participants = this.participants.filter(val => val.id !== participant.id);
 
               this.messageService.add({severity: 'success', summary: 'Successful', detail: data.message, life: 1000});
             } else {
@@ -113,6 +144,7 @@ export class ParticipantsComponent implements OnInit {
   }
 
   addParticipant() {
+    this.displayAffect=false;
     this.displayAdd = true;
     this.displayEdit = false;
     if (this.openpopup) {
@@ -128,10 +160,44 @@ export class ParticipantsComponent implements OnInit {
       telControl: ['', Validators.required],
       paysControl: ['', Validators.required],
     });
+    this.getAllFormations();
     this.getAllPays();
+
     this.title = 'Ajouter Participant';
   }
+  saveAffectParticipant(participant: Participants){
+    if (this.ParticipantGroup.invalid) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Probléme d affectation de participant',
+        detail: 'Vérifier votre formulaire'
+      });
+      return;
+    }
+    this.ParticipantForm.nom = this.f.nomControl.value;
+    this.ParticipantForm.prenom = this.f.prenomControl.value;
+    this.ParticipantForm.pays = this.f.paysControl.value;
+    this.ParticipantForm.email = this.f.emailControl.value;
+    this.ParticipantForm.tel = this.f.telControl.value;
+    this.ParticipantForm.formations=this.f.formationControl.value;
+    this.ParticipantForm.id = participant.id;
+    this.participantsService.addParticipant(this.ParticipantForm).subscribe(data => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Affecter participant',
+        detail: 'Le participant est ajouté avec success'
+      });
 
+    }, error => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Probléme ajout participant',
+        detail: 'Impossible d\'ajouter le participant'
+      });
+    })
+    this.hideDialog();
+    this.ngOnInit();
+  }
   saveEditParticipant(participant: Participants) {
     if (this.ParticipantGroup.invalid) {
       this.messageService.add({
@@ -146,7 +212,7 @@ export class ParticipantsComponent implements OnInit {
     this.ParticipantForm.pays = this.f.paysControl.value;
     this.ParticipantForm.email = this.f.emailControl.value;
     this.ParticipantForm.tel = this.f.telControl.value;
-    this.ParticipantForm.participantId = participant.participantId;
+    this.ParticipantForm.id = participant.id;
     this.participantsService.addParticipant(this.ParticipantForm).subscribe(data => {
       this.messageService.add({
         severity: 'success',
@@ -216,6 +282,11 @@ export class ParticipantsComponent implements OnInit {
   {
     this.paysService.getAllPays().subscribe(data=>{
       this.paysList=data;
+    })
+  }
+  getAllFormations(){
+    this.formationService.getAllFormations().subscribe(data=>{
+      this.formationList=data;
     })
   }
 }

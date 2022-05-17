@@ -31,9 +31,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addOrUpdateUser(User user) {
-        user.setPassword(ecnodePassword(user.getPassword()));
-        return userRepository.save(user);
+    public AjoutResponse addOrUpdateUser(User user) {
+        AjoutResponse ajoutResponse=new AjoutResponse();
+
+        try{
+            userRepository.save(user);
+            ajoutResponse.setMessage("success");
+            return ajoutResponse;
+        }catch (Exception e )
+        {
+            ajoutResponse.setMessage(e.getMessage());
+            return ajoutResponse;
+        }
     }
 
     @Override

@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Getter
@@ -18,8 +20,17 @@ public class Participant implements Serializable {
     private Long id;
     private String nom;
     private String prenom;
+    @Column(unique = true,nullable = false)
     private String email;
+    @Column(unique = true,nullable = false)
     private String tel;
+    @ManyToMany
+    @JoinTable(
+            name="participant_formation",
+            joinColumns = {@JoinColumn(name="participant_id",referencedColumnName = "participantID")},
+            inverseJoinColumns = {@JoinColumn(name="formation_id",referencedColumnName ="formationId")}
+    )
+    private Set<Formation> formations=new HashSet<>();
     @OneToOne()
     @JoinColumn(name="fk_pays", referencedColumnName = "PaysId", foreignKey = @ForeignKey(name = "PaysId"))
     private Pays pays;

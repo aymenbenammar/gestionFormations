@@ -5,7 +5,7 @@
     <div class="table-responsive">
       <div class="card">
         <p-table #dt [value]="sessions" [rows]="5" [paginator]="true"
-                 [globalFilterFields]="['lieu','dateDebut','dateFin','nbParticipants','session.formateur.nom']"
+                 [globalFilterFields]="['lieu','dateDebut','dateFin','nbParticipants','session.formateur.nom,session.formation.titre']"
                  responsiveLayout="scroll"
                  [rowHover]="true" dataKey="id"
                  currentPageReportTemplate="Affichage de {first} à {last} de {totalRecords} sessions"
@@ -39,6 +39,9 @@
               <th pSortableColumn="formateur">Formateur
                 <p-sortIcon field="formateur"></p-sortIcon>
               </th>
+              <th pSortableColumn="formation">Formation
+                <p-sortIcon field="formation"></p-sortIcon>
+              </th>
               <th style="width: 132px;"></th>
             </tr>
           </ng-template>
@@ -49,6 +52,7 @@
               <td>{{session.dateFin}}</td>
               <td>{{session.nbParticipants}}</td>
               <td><span *ngIf="session.formateur!=null">{{ session!.formateur!.nom }}</span></td>
+              <td><span *ngIf="session.formation!=null">{{ session!.formation!.titre }}</span></td>
               <td>
                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
                         (click)="editSession(session)"></button>
@@ -99,7 +103,7 @@
 
           </div>
           <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
               <mat-form-field class="example-full-width">
                 <mat-label>nbParticipants</mat-label>
                 <input type="number" matInput
@@ -109,7 +113,7 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
               <mat-form-field *ngIf="displayEdit"class="example-full-width">
                 <mat-label>Formateur</mat-label>
                 <mat-select [(ngModel)]="session!.formateur" formControlName="formateurControl" [compareWith]="comparer">
@@ -126,6 +130,26 @@
                     *ngFor="let formateur of formateurList" [value]="formateur"> {{formateur.nom}} </mat-option>
                 </mat-select>
                 <mat-error *ngIf="formateurControl.hasError('required')">Formateur est <strong>obligatoire</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-sm-4">
+              <mat-form-field *ngIf="displayEdit"class="example-full-width">
+                <mat-label>Formation</mat-label>
+                <mat-select [(ngModel)]="session!.formation" formControlName="formationControl" [compareWith]="comparer">
+                  <mat-option
+                    *ngFor="let formation of formationList" [value]="formation"> {{formation.titre}} </mat-option>
+                </mat-select>
+                <mat-error *ngIf="formationControl.hasError('required')">Formation est <strong>obligatoire</strong>
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field *ngIf="displayAdd"class="example-full-width">
+                <mat-label>Formation</mat-label>
+                <mat-select formControlName="formationControl" >
+                  <mat-option
+                    *ngFor="let formation of formationList" [value]="formation"> {{formation.titre}} </mat-option>
+                </mat-select>
+                <mat-error *ngIf="formationControl.hasError('required')">Formation est <strong>obligatoire</strong>
                 </mat-error>
               </mat-form-field>
             </div>

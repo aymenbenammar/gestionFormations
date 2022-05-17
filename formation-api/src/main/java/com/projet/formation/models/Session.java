@@ -29,6 +29,20 @@ public class Session implements Serializable {
     @JoinColumn(name = "formateur_id")
     private Formateur formateur;
 
+
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name="formation_id")
+    private Formation formation;
+
+    public Formation getFormation() {
+        return formation;
+    }
+
+    public void setFormation(Formation formation) {
+        this.formation = formation;
+    }
     public Long getSessionId() {
         return sessionId;
     }

@@ -1,6 +1,7 @@
 package com.projet.formation.dto;
 
 import com.projet.formation.models.Formateur;
+import com.projet.formation.models.Formation;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,4 +18,5 @@ public class SessionDto extends AbstractDto {
     Date dateFin;
     int nbParticipants;
     Formateur formateur;
+    Formation formation;
 }

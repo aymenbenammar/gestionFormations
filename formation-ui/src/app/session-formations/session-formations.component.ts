@@ -5,6 +5,8 @@ import {ConfirmationService, MessageService} from "primeng/api";
 import {SessionService} from "../shared/service/session.service";
 import {FormateursService} from "../shared/service/formateurs.service";
 import {Formateurs} from "../model/Formateurs";
+import {Formations} from "../model/Formations";
+import {FormationsService} from "../shared/service/formations.service";
 let SESSIONS: Session[] = [];
 
 
@@ -24,16 +26,18 @@ export class SessionFormationsComponent implements OnInit {
   sessions!: Session[];
   session!: Session;
   formateurList: Formateurs[] = [];
+  formationList: Formations[]=[];
 
   lieuControl = new FormControl('', [Validators.required]);
   dateDebutControl = new FormControl('', [Validators.required]);
   dateFinControl = new FormControl('', [Validators.required]);
   nbParticipantsControl = new FormControl('', [Validators.required]);
   formateurControl = new FormControl('', [Validators.required]);
+  formationControl= new FormControl('',[Validators.required]);
 
   constructor( private confirmationService: ConfirmationService, private formBuilder: FormBuilder,
                private messageService: MessageService,
-              private sessionService: SessionService,private formateurService:FormateursService
+              private sessionService: SessionService,private formateurService:FormateursService,private formationService : FormationsService
   )
   {
     this.SessionGroup = this.formBuilder.group({
@@ -42,6 +46,7 @@ export class SessionFormationsComponent implements OnInit {
       dateFinControl: ['', Validators.required],
       nbParticipantsControl: ['', Validators.required],
       formateurControl: ['', Validators.required],
+      formationControl: ['',Validators.required]
     });
     this.SessionForm = {
       sessionId: undefined,
@@ -50,6 +55,7 @@ export class SessionFormationsComponent implements OnInit {
       dateFin: undefined,
       nbParticipants:undefined ,
       formateur: undefined,
+      formation: undefined
 
     }
   }
@@ -90,6 +96,7 @@ export class SessionFormationsComponent implements OnInit {
       formateurControl: [this.session.formateur, Validators.required],
     });
     this.getAllFormateur();
+    this.getAllFormations();
   }
 
   deleteSession(session:Session)
@@ -130,11 +137,13 @@ export class SessionFormationsComponent implements OnInit {
       dateFinControl: ['', Validators.required],
       nbParticipantsControl: ['', Validators.required],
       formateurControl: ['', Validators.required],
+      formationControl: ['',Validators.required]
 
     });
 
     this.title = 'Ajouter Session';
     this.getAllFormateur();
+    this.getAllFormations();
     console.log('session')
   }
   comparer(o1: any, o2: any): boolean {
@@ -156,6 +165,7 @@ export class SessionFormationsComponent implements OnInit {
     this.SessionForm.dateFin = this.f.dateFinControl.value;
     this.SessionForm.nbParticipants = this.f.nbParticipantsControl.value;
     this.SessionForm.formateur = this.f.formateurControl.value;
+    this.SessionForm.formation=this.f.formationControl.value;
     this.SessionForm.sessionId=session.sessionId;
     console.log(this.SessionForm)
     this.sessionService.addSession(this.SessionForm).subscribe(data => {
@@ -194,6 +204,7 @@ export class SessionFormationsComponent implements OnInit {
     this.SessionForm.dateFin = this.f.dateFinControl.value;
     this.SessionForm.nbParticipants = this.f.nbParticipantsControl.value;
     this.SessionForm.formateur = this.f.formateurControl.value;
+    this.SessionForm.formation= this.f.formationControl.value;
 
     console.log(this.SessionForm);
     this.sessionService.addSession(this.SessionForm).subscribe(data => {
@@ -226,6 +237,11 @@ export class SessionFormationsComponent implements OnInit {
     this.formateurService.getAllFormateurs().subscribe(data => {
       console.log(data)
       this.formateurList = data;
+    })
+  }
+  getAllFormations(){
+    this.formationService.getAllFormations().subscribe(data=>{
+      this.formationList=data;
     })
   }
 }
