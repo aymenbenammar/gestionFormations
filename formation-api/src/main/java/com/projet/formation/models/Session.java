@@ -8,6 +8,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -28,14 +30,17 @@ public class Session implements Serializable {
     @ManyToOne
     @JoinColumn(name = "formateur_id")
     private Formateur formateur;
-
-
-
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name="formation_id")
     private Formation formation;
-
+    @ManyToMany
+    @JoinTable(
+            name="participant_session",
+            joinColumns = {@JoinColumn(name="session_id",referencedColumnName ="sessionId")},
+            inverseJoinColumns = {@JoinColumn(name="participant_id",referencedColumnName = "participantID")}
+    )
+    private Set<Participant> participants=new HashSet<>();
     public Formation getFormation() {
         return formation;
     }
@@ -89,5 +94,13 @@ public class Session implements Serializable {
 
     public void setFormateur(Formateur formateur) {
         this.formateur = formateur;
+    }
+
+    public Set<Participant> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(Set<Participant> participants) {
+        this.participants = participants;
     }
 }

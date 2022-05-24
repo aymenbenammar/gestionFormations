@@ -1,5 +1,6 @@
 import {Formateurs} from "./Formateurs";
 import {Formations} from "./Formations";
+import {Participants} from "./Participants";
 
 export class Session {
   sessionId?:number;
@@ -9,5 +10,6 @@ export class Session {
   nbParticipants?: number ;
   formateur?: Formateurs ;
   formation?: Formations;
+  participant?: Participants;
 
 }

@@ -42,6 +42,9 @@
               <th pSortableColumn="formation">Formation
                 <p-sortIcon field="formation"></p-sortIcon>
               </th>
+              <th pSortableColumn="formation">Participants
+              <p-sortIcon field="formation"></p-sortIcon>
+            </th>
               <th style="width: 132px;"></th>
             </tr>
           </ng-template>
@@ -53,6 +56,8 @@
               <td>{{session.nbParticipants}}</td>
               <td><span *ngIf="session.formateur!=null">{{ session!.formateur!.nom }}</span></td>
               <td><span *ngIf="session.formation!=null">{{ session!.formation!.titre }}</span></td>
+              <td><span *ngFor="let participant of session.participants ">Nom :{{ participant.nom}} <br> Prenom:{{participant.prenom}}<br> Tel:{{participant.tel}} <br> mail:{{participant.email}} </span></td>
+
               <td>
                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
                         (click)="editSession(session)"></button>
