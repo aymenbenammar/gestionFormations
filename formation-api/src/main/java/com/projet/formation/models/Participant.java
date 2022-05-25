@@ -28,10 +28,6 @@ public class Participant implements Serializable {
     private String tel;
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
             mappedBy = "participants")
     Set<Session> session;
     @OneToOne()

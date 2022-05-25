@@ -9,5 +9,5 @@ export class Participants {
   email!: string ;
   tel?: number ;
   pays?:Pays;
-  sessions?: Session[];
+  session?: Session;
 }

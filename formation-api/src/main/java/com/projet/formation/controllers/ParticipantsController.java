@@ -5,9 +5,12 @@ import com.projet.formation.dto.AjoutResponse;
 import com.projet.formation.mapper.ObjectMapperUtils;
 import com.projet.formation.models.Participant;
 import com.projet.formation.models.Role;
+import com.projet.formation.models.Session;
 import com.projet.formation.repository.ParticipantRepository;
+import com.projet.formation.repository.SessionRepository;
 import com.projet.formation.services.ParticipantService;
 import com.projet.formation.services.RoleService;
+import com.projet.formation.services.SessionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +30,10 @@ public class ParticipantsController {
     private ParticipantService participantService;
     @Autowired
     private ParticipantRepository participantRepository;
+    @Autowired
+    private SessionRepository sessionRepository;
+    @Autowired
+    private SessionService sessionService;
     ModelMapper modelMapper = new ModelMapper();
     @Autowired
     private RoleService roleService;
@@ -43,6 +50,11 @@ public class ParticipantsController {
     public ResponseEntity<ParticipantDto> addOrUpdateParticipant(@Valid @RequestBody ParticipantDto participantDto) {
 
         Participant participant = ObjectMapperUtils.map(participantDto, Participant.class);
+        for(Session s: participant.getSession()) {
+            Session ss = sessionRepository.getOne(s.getSessionId());
+            ss.getParticipants().add(participant);
+            sessionRepository.save(ss);
+        }
         ParticipantDto participantDto1 = ObjectMapperUtils.map(participantRepository.save(participant),ParticipantDto.class);
         return new ResponseEntity<>(participantDto1, HttpStatus.OK);
     }

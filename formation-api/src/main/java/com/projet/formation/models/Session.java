@@ -34,11 +34,7 @@ public class Session implements Serializable {
     @ManyToOne
     @JoinColumn(name="formation_id")
     private Formation formation;
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="participant_session",
             joinColumns = {@JoinColumn(name="session_id",referencedColumnName ="sessionId")},

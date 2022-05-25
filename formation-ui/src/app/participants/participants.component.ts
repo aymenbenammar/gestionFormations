@@ -56,7 +56,7 @@ export class ParticipantsComponent implements OnInit {
       email: '',
       tel: undefined,
       pays: undefined,
-      sessions: undefined
+      session: undefined
     }
   }
 
@@ -94,8 +94,8 @@ export class ParticipantsComponent implements OnInit {
       emailControl: [this.participant.email, [Validators.required, Validators.email]],
       prenomControl: [this.participant.prenom, Validators.required],
       telControl: [this.participant.tel, Validators.required],
-      paysControl: [this.participant.pays!.libelle, Validators.required],
-      sessionControl: [this.participant.sessions]
+      paysControl: [this.participant.pays],
+      sessionControl: [this.participant.session]
     });
     this.getAllSession();
   }
@@ -161,6 +161,7 @@ export class ParticipantsComponent implements OnInit {
       prenomControl: ['', Validators.required],
       telControl: ['', Validators.required],
       paysControl: ['', Validators.required],
+
     });
     this.getAllSession();
     this.getAllPays();
@@ -181,7 +182,7 @@ export class ParticipantsComponent implements OnInit {
     this.ParticipantForm.pays = this.f.paysControl.value;
     this.ParticipantForm.email = this.f.emailControl.value;
     this.ParticipantForm.tel = this.f.telControl.value;
-    this.ParticipantForm.sessions=this.f.sessionControl.value;
+    this.ParticipantForm.session=this.f.sessionControl.value;
     this.ParticipantForm.id = participant.id;
     console.log(this.ParticipantForm)
     this.participantsService.addParticipant(this.ParticipantForm).subscribe(data => {

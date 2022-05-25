@@ -111,7 +111,7 @@
             </div>
           </div>
           <div class="row">
-            <div *ngIf="!displayAffect" class="col-sm-6">
+            <div *ngIf="!displayAffect" class="col-sm-4">
               <mat-form-field class="example-full-width">
                 <mat-label>Email</mat-label>
                 <input type="email" matInput
@@ -125,7 +125,7 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
               <mat-form-field *ngIf="displayEdit"class="example-full-width">
                 <mat-label>pays</mat-label>
                 <mat-select [(ngModel)]="participant!.pays" formControlName="paysControl" [compareWith]="comparer">
@@ -144,6 +144,7 @@
                 <mat-error *ngIf="paysControl.hasError('required')">pays est <strong>obligatoire</strong>
                 </mat-error>
               </mat-form-field>
+            </div>
               <mat-form-field *ngIf="displayAffect"class="example-full-width">
                 <mat-label>pays</mat-label>
                 <mat-select formControlName="paysControl">
@@ -153,11 +154,13 @@
                 <mat-error *ngIf="paysControl.hasError('required')">pays est <strong>obligatoire</strong>
                 </mat-error>
               </mat-form-field>
+              <div class="col-sm-4">
+
               <mat-form-field *ngIf="displayAffect"class="example-full-width">
-                <mat-label>Date debut de la Sessions</mat-label>
+                <mat-label>lieu de la Sessions</mat-label>
                 <mat-select formControlName="sessionControl" multiple>
                   <mat-option
-                    *ngFor="let session of sessionList"  [value]="session"> {{session.dateDebut}} </mat-option>
+                    *ngFor="let session of sessionList"  [value]="session"> {{session.lieu}} </mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
