@@ -4,8 +4,10 @@ import com.projet.formation.Dto.ParticipantDto;
 import com.projet.formation.dto.AjoutResponse;
 import com.projet.formation.mapper.ObjectMapperUtils;
 import com.projet.formation.models.Participant;
+import com.projet.formation.models.Role;
 import com.projet.formation.repository.ParticipantRepository;
 import com.projet.formation.services.ParticipantService;
+import com.projet.formation.services.RoleService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,10 +28,12 @@ public class ParticipantsController {
     @Autowired
     private ParticipantRepository participantRepository;
     ModelMapper modelMapper = new ModelMapper();
-
+    @Autowired
+    private RoleService roleService;
 
     @GetMapping("/participants")
     public ResponseEntity <List<ParticipantDto>> getAllParticipants() {
+        List<Participant> listOfParticipant =participantRepository.findAll();
         List<ParticipantDto> listOfParticipantDto = ObjectMapperUtils.mapAll(participantRepository.findAll(), ParticipantDto.class);
         Collections.reverse(listOfParticipantDto);
         return new ResponseEntity<>(listOfParticipantDto, HttpStatus.OK);

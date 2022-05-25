@@ -7,6 +7,8 @@ import {Pays} from "../model/Pays";
 import {PaysService} from "../shared/service/pays.service";
 import {Formations} from "../model/Formations";
 import {FormationsService} from "../shared/service/formations.service";
+import {SessionService} from "../shared/service/session.service";
+import {Session} from "../model/Session";
 
 let PARTICIAPANTS: Participants[] = [];
 
@@ -27,16 +29,17 @@ export class ParticipantsComponent implements OnInit {
   participant!: Participants;
   paysList:Pays[]=[];
   formationList: Formations[]=[];
+  sessionList: Session[]=[];
 
 
   nomControl = new FormControl('', [Validators.required]);
   prenomControl = new FormControl('', [Validators.required]);
   telControl = new FormControl('', [Validators.required]);
   paysControl = new FormControl('', [Validators.required]);
-  formationControl= new FormControl('',[Validators.required]);
+  sessionControl= new FormControl('',[Validators.required]);
 
   constructor( private confirmationService: ConfirmationService, private formBuilder: FormBuilder,private paysService: PaysService,
-              private participantsService: ParticipantsService, private messageService: MessageService,private formationService:FormationsService
+              private participantsService: ParticipantsService, private messageService: MessageService,private sessionService:SessionService
   ) {
     this.ParticipantGroup = this.formBuilder.group({
       nomControl: ['', Validators.required],
@@ -44,7 +47,7 @@ export class ParticipantsComponent implements OnInit {
       prenomControl: ['', Validators.required],
       telControl: ['', Validators.required],
       paysControl: ['', Validators.required],
-      formationControl:['']
+      sessionControl:['']
     });
     this.ParticipantForm = {
       id: undefined,
@@ -53,7 +56,7 @@ export class ParticipantsComponent implements OnInit {
       email: '',
       tel: undefined,
       pays: undefined,
-      formations: undefined
+      sessions: undefined
     }
   }
 
@@ -92,10 +95,9 @@ export class ParticipantsComponent implements OnInit {
       prenomControl: [this.participant.prenom, Validators.required],
       telControl: [this.participant.tel, Validators.required],
       paysControl: [this.participant.pays!.libelle, Validators.required],
-      formationControl: [this.participant.formations!.titre]
+      sessionControl: [this.participant.sessions]
     });
-    this.getAllFormations();
-    this.getAllPays()
+    this.getAllSession();
   }
   editParticipant(participant: Participants) {
 
@@ -117,7 +119,7 @@ export class ParticipantsComponent implements OnInit {
       telControl: [this.participant.tel, Validators.required],
       paysControl: [this.participant.pays!.libelle, Validators.required],
     });
-    this.getAllFormations();
+    this.getAllSession();
     this.getAllPays()
   }
 
@@ -160,7 +162,7 @@ export class ParticipantsComponent implements OnInit {
       telControl: ['', Validators.required],
       paysControl: ['', Validators.required],
     });
-    this.getAllFormations();
+    this.getAllSession();
     this.getAllPays();
 
     this.title = 'Ajouter Participant';
@@ -179,13 +181,14 @@ export class ParticipantsComponent implements OnInit {
     this.ParticipantForm.pays = this.f.paysControl.value;
     this.ParticipantForm.email = this.f.emailControl.value;
     this.ParticipantForm.tel = this.f.telControl.value;
-    this.ParticipantForm.formations=this.f.formationControl.value;
+    this.ParticipantForm.sessions=this.f.sessionControl.value;
     this.ParticipantForm.id = participant.id;
+    console.log(this.ParticipantForm)
     this.participantsService.addParticipant(this.ParticipantForm).subscribe(data => {
       this.messageService.add({
         severity: 'success',
         summary: 'Affecter participant',
-        detail: 'Le participant est ajouté avec success'
+        detail: 'Le participant est affecté avec success'
       });
 
     }, error => {
@@ -284,9 +287,15 @@ export class ParticipantsComponent implements OnInit {
       this.paysList=data;
     })
   }
-  getAllFormations(){
-    this.formationService.getAllFormations().subscribe(data=>{
-      this.formationList=data;
+  // getAllFormations(){
+  //   this.formationService.getAllFormations().subscribe(data=>{
+  //     this.formationList=data;
+  //   })
+  // }
+
+  private getAllSession() {
+    this.sessionService.getAllSession().subscribe(data=>{
+      this.sessionList=data;
     })
   }
 }

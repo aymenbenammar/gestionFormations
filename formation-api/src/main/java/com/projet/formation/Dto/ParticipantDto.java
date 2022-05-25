@@ -2,6 +2,7 @@ package com.projet.formation.Dto;
 
 import com.projet.formation.models.Formation;
 import com.projet.formation.models.Pays;
+import com.projet.formation.models.Session;
 import lombok.Getter;
 import lombok.Setter;
 import org.bongiorno.dto.support.AbstractDto;
@@ -18,5 +19,18 @@ public class ParticipantDto extends AbstractDto {
     String email;
     String tel;
     Pays pays ;
-    Set<Formation> formations = new HashSet<>();
+    Set<Session> session = new HashSet<>();
+
+//    @Override
+//    public String toString() {
+//        return "ParticipantDto{" +
+//                "id=" + id +
+//                ", nom='" + nom + '\'' +
+//                ", prenom='" + prenom + '\'' +
+//                ", email='" + email + '\'' +
+//                ", tel='" + tel + '\'' +
+//                ", pays=" + pays +
+//                ", session=" + session +
+//                '}';
+//    }
 }

@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -34,7 +34,11 @@ public class Session implements Serializable {
     @ManyToOne
     @JoinColumn(name="formation_id")
     private Formation formation;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
     @JoinTable(
             name="participant_session",
             joinColumns = {@JoinColumn(name="session_id",referencedColumnName ="sessionId")},
@@ -103,4 +107,6 @@ public class Session implements Serializable {
     public void setParticipants(Set<Participant> participants) {
         this.participants = participants;
     }
+
+
 }
